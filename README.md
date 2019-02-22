@@ -1,2 +1,2 @@
 # flask-fun
-Incrementing Integers As A Service - A Thinkific Technica lChallenge
+Incrementing Integers As A Service - A Thinkific Technical Challenge
