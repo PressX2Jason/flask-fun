@@ -14,15 +14,13 @@ bp = Blueprint('core', __name__)
 @loginRequired
 def get_next_seq():
     db = get_db()
-    errors = []
-
 
     email = request.form['email']
-    password = request.form['password']
-    apiKey = request.form['apiKey']
 
-    count = db.execute('SELECT curr_num FROM user WHERE email = ?', (email, ))
-    pass
+    db.execute('UPDATE user SET curr_num = curr_num + 1 WHERE email = ?', (email, ))
+    db.commit()
+    count = db.execute('SELECT curr_num FROM user WHERE email = ?', (email, ), one=True)
+    return count
     
 @bp.route('/current', methods=('GET'))
 @loginRequired
@@ -30,5 +28,7 @@ def get_current_seq():
     db = get_db()
     errors = []
 
-    count = db.execute('')
-    pass
+     email = request.form['email']
+
+    count = db.execute('SELECT curr_num FROM user WHERE email = ?', (email, ), one=True)
+    return count
