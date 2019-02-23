@@ -15,53 +15,53 @@ def generate_api_key():
 
 @bp.route('/register', methods=('GET'))
 def register():
-    def usernameExists(username):
-        return db.execute('SELECT id FROM user WHERE username = ?', (username, ) ).fetchone() is not None
+    def emailExists(email):
+        return db.execute('SELECT id FROM user WHERE email = ?', (email, ) ).fetchone() is not None
 
-    username = request.form['username']
+    email = request.form['email']
     password = request.form['password']
     db = get_db()
     errors = []
 
-    if not username:
-        errors.append('Username is required.')
+    if not email:
+        errors.append('email is required.')
     if not password:
         errors.append('Password  is required.')
-    if username and usernameExists(username):
-        errors.append('User {} is already registered.'.format(username))
+    if email and emailExists(email):
+        errors.append('User {} is already registered.'.format(email))
     
     if not errors:
         api_key =  generate_api_key()
         db.execute(
-            'INSERT INTO user (username, password) values (?, ?, ?, ?)',
-            (username, generate_password_hash(password), api_key, 0)
+            'INSERT INTO user (email, password) values (?, ?, ?, ?)',
+            (email, generate_password_hash(password), api_key, 0)
         )
         db.commit()
         return {'api_key': api_key}
 
     return errors
 
-def validateLogin(username, password):
+def validateLogin(email, password):
     errors = []
     db = get_db()
 
-    user = db.execute('SELECT * FROM user WHERE username = ?', (username, )).fetchone()
+    user = db.execute('SELECT * FROM user WHERE email = ?', (email, )).fetchone()
 
     if user is none:
-        errors.append('Username is incorrect.')
+        errors.append('email is incorrect.')
     elif not check_password_hash(user['password'], password):
         errors.append('Password is incorrect.')
 
     return errors
 
-def validateApiKey(username, apiKey):
+def validateApiKey(email, apiKey):
     errors = []
     db = get_db()
 
-    user = db.execute('SELECT * FROM user WHERE username = ?', (username, )).fetchone()
+    user = db.execute('SELECT * FROM user WHERE email = ?', (email, )).fetchone()
 
     if user is none:
-        errors.append('Username is incorrect.')
+        errors.append('email is incorrect.')
     elif user['apiKey'] != apiKey:
         errors.append('Api Key is incorrect.')
 
@@ -70,15 +70,15 @@ def validateApiKey(username, apiKey):
 def loginRequired(func):
 
     def wrapper():
-        username = request.form['username']
+        email = request.form['email']
         password = request.form['password']
         apiKey = request.form['apiKey']
 
-        errors = validateLogin(username, password)
+        errors = validateLogin(email, password)
         if errors:
             return errors
 
-        errors = validateApiKey(username, apiKey)
+        errors = validateApiKey(email, apiKey)
         if errors:
             return errors
 
