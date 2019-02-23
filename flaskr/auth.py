@@ -67,5 +67,24 @@ def validateApiKey(username, apiKey):
 
     return errors
 
+def loginRequired(func):
+
+    def wrapper():
+        username = request.form['username']
+        password = request.form['password']
+        apiKey = request.form['apiKey']
+
+        errors = validateLogin(username, password)
+        if errors:
+            return errors
+
+        errors = validateApiKey(username, apiKey)
+        if errors:
+            return errors
+
+        func()
+    
+    return wrapper
+
 
 
