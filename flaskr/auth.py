@@ -14,7 +14,7 @@ def generate_api_key():
     return '1234356'
 
 @bp.route('/register', methods=('GET'))
-def get_next_in_seq():
+def register():
     def usernameExists(username):
         return db.execute('SELECT id FROM user WHERE username = ?', (username, ) ).fetchone() is not None
 
@@ -64,7 +64,7 @@ def validateApiKey(username, apiKey):
         errors.append('Username is incorrect.')
     elif user['apiKey'] != apiKey:
         errors.append('Api Key is incorrect.')
-        
+
     return errors
 
 
