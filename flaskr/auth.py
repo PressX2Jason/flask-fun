@@ -13,7 +13,7 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 def generate_api_key():
     return '1234356'
 
-@bp.route('/next', methods=('GET'))
+@bp.route('/register', methods=('GET'))
 def get_next_in_seq():
     def usernameExists(username):
         return db.execute('SELECT id FROM user WHERE username = ?', (username, ) ).fetchone() is not None
@@ -37,10 +37,35 @@ def get_next_in_seq():
             (username, generate_password_hash(password), api_key, 0)
         )
         db.commit()
-        return api_key
-    
-    if errors:
-        flash(error)
-    return 
+        return {'api_key': api_key}
+
+    return errors
+
+def validateLogin(username, password):
+    errors = []
+    db = get_db()
+
+    user = db.execute('SELECT * FROM user WHERE username = ?', (username, )).fetchone()
+
+    if user is none:
+        errors.append('Username is incorrect.')
+    elif not check_password_hash(user['password'], password):
+        errors.append('Password is incorrect.')
+
+    return errors
+
+def validateApiKey(username, apiKey):
+    errors = []
+    db = get_db()
+
+    user = db.execute('SELECT * FROM user WHERE username = ?', (username, )).fetchone()
+
+    if user is none:
+        errors.append('Username is incorrect.')
+    elif user['apiKey'] != apiKey:
+        errors.append('Api Key is incorrect.')
+        
+    return errors
+
 
 
