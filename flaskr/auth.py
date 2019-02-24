@@ -68,7 +68,7 @@ def validateApiKey(email, apiKey):
     return errors
 
 def loginRequired(func):
-
+    # TODO: check if we need both api key and password to access the api
     def wrapper():
         email = request.form['email']
         password = request.form['password']
