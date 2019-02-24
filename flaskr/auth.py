@@ -48,7 +48,7 @@ def validateLogin(email, password):
     user = db.execute('SELECT * FROM user WHERE email = ?', (email, )).fetchone()
 
     if user is None:
-        errors.append('email is incorrect.')
+        errors.append('Email is incorrect.')
     elif not check_password_hash(user['password'], password):
         errors.append('Password is incorrect.')
 
@@ -61,8 +61,8 @@ def validateApiKey(email, apiKey):
     user = db.execute('SELECT * FROM user WHERE email = ?', (email, )).fetchone()
 
     if user is None:
-        errors.append('email is incorrect.')
-    elif user['apiKey'] != apiKey:
+        errors.append('Email is incorrect.')
+    elif user['api_key'] != apiKey:
         errors.append('Api Key is incorrect.')
 
     return errors
@@ -73,7 +73,7 @@ def loginRequired(route):
     def wrapped_route(**kwargs):
         email = request.form['email']
         password = request.form['password']
-        apiKey = request.form['apiKey']
+        apiKey = request.form['api_key']
 
         errors = validateLogin(email, password)
         if errors:
