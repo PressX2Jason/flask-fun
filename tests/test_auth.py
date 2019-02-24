@@ -27,40 +27,29 @@ def test_register_validate_input(client, email, password, message):
     )
     assert message in response.data
 
-@pytest.mark.parametrize(('registeredEmail', 'registeredPassword', 'accessEmail', 'accessApiKey', 'result'), (
-    ('a', 'b', 'c', '1234356', 'Email is incorrect.'),
-    ('a', 'b', 'a', 'abcdefg', 'Api Key is incorrect.'),
-    ('a', 'b', 'a', '1234356', ''),
+@pytest.mark.parametrize(('email', 'apiKey', 'result'), (
+    ('notInDb', '', 'Email is incorrect.'),
+    ('test', 'a', 'Api Key is incorrect.'),
+    ('test', 'key1', ''),
 ))
-def test_validateApiKey(client, app, registeredEmail, registeredPassword, accessEmail, accessApiKey, result):
-
-    response = client.post(
-        '/register', data={'email': registeredEmail, 'password': registeredPassword}
-    )
+def test_validateApiKey(client, app, email, apiKey, result):
 
     with app.app_context():
-        errors = validate_api_key(accessEmail, accessApiKey)
-        print(errors)
+        errors = validate_api_key(email, apiKey)
         if result:
             assert result in errors
         else:
             assert not errors
 
 
-@pytest.mark.parametrize(('registeredEmail', 'registeredPassword', 'accessEmail', 'accessPassword', 'result'), (
-    ('a', 'b', 'c', 'b', 'Email is incorrect.'),
-    ('a', 'b', 'a', 'c', 'Password is incorrect.'),
-    ('a', 'b', 'a', 'b', ''),
+@pytest.mark.parametrize(('email', 'password', 'result'), (
+    ('a', '', 'Email is incorrect.'),
+    ('test', '', 'Password is incorrect.'),
 ))
-def test_validateLogin(client, app, registeredEmail, registeredPassword, accessEmail, accessPassword, result):
-
-    response = client.post(
-        '/register', data={'email': registeredEmail, 'password': registeredPassword}
-    )
+def test_validateLogin(client, app, email, password, result):
 
     with app.app_context():
-        errors = validate_login(accessEmail, accessPassword)
-        print(errors)
+        errors = validate_login(email, password)
         if result:
             assert result in errors
         else:
