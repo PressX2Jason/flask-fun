@@ -46,3 +46,22 @@ def test_validateApiKey(client, app, registeredEmail, registeredPassword, access
         else:
             assert not errors
 
+
+@pytest.mark.parametrize(('registeredEmail', 'registeredPassword', 'accessEmail', 'accessPassword', 'result'), (
+    ('a', 'b', 'c', 'b', 'Email is incorrect.'),
+    ('a', 'b', 'a', 'c', 'Password is incorrect.'),
+    ('a', 'b', 'a', 'b', ''),
+))
+def test_validateLogin(client, app, registeredEmail, registeredPassword, accessEmail, accessPassword, result):
+
+    response = client.post(
+        '/register', data={'email': registeredEmail, 'password': registeredPassword}
+    )
+
+    with app.app_context():
+        errors = validateLogin(accessEmail, accessPassword)
+        print(errors)
+        if result:
+            assert result in errors
+        else:
+            assert not errors
