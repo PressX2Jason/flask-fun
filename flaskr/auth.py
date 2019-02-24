@@ -15,7 +15,7 @@ def generate_api_key():
 
 @bp.route('/register', methods=['POST'])
 def register():
-    def emailExists(email):
+    def email_exists(email):
         return db.execute('SELECT id FROM user WHERE email = ?', (email, ) ).fetchone() is not None
 
     email = request.form['email']
@@ -27,7 +27,7 @@ def register():
         errors.append('Email is required.')
     if not password:
         errors.append('Password is required.')
-    if email and emailExists(email):
+    if email and email_exists(email):
         errors.append('User {} is already registered.'.format(email))
     
     if not errors:
@@ -41,7 +41,7 @@ def register():
 
     return jsonify(errors=errors)
 
-def validateLogin(email, password):
+def validate_login(email, password):
     errors = []
     db = get_db()
 
@@ -54,7 +54,7 @@ def validateLogin(email, password):
 
     return errors
 
-def validateApiKey(email, apiKey):
+def validate_api_key(email, apiKey):
     errors = []
     db = get_db()
 
@@ -67,7 +67,7 @@ def validateApiKey(email, apiKey):
 
     return errors
 
-def loginRequired(route):
+def login_required(route):
     # TODO: check if we need both api key and password to access the api
     @functools.wraps(route)
     def wrapped_route(**kwargs):
@@ -75,11 +75,11 @@ def loginRequired(route):
         password = request.form['password']
         apiKey = request.form['api_key']
 
-        errors = validateLogin(email, password)
+        errors = validate_login(email, password)
         if errors:
             return errors
 
-        errors = validateApiKey(email, apiKey)
+        errors = validate_api_key(email, apiKey)
         if errors:
             return errors
 

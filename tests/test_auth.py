@@ -1,7 +1,7 @@
 import pytest
 from flask import g, session
 from flaskr.db import get_db
-from flaskr.auth import validateApiKey, validateLogin
+from flaskr.auth import validate_api_key, validate_login
 
 
 def test_register(client, app):
@@ -39,7 +39,7 @@ def test_validateApiKey(client, app, registeredEmail, registeredPassword, access
     )
 
     with app.app_context():
-        errors = validateApiKey(accessEmail, accessApiKey)
+        errors = validate_api_key(accessEmail, accessApiKey)
         print(errors)
         if result:
             assert result in errors
@@ -59,7 +59,7 @@ def test_validateLogin(client, app, registeredEmail, registeredPassword, accessE
     )
 
     with app.app_context():
-        errors = validateLogin(accessEmail, accessPassword)
+        errors = validate_login(accessEmail, accessPassword)
         print(errors)
         if result:
             assert result in errors
