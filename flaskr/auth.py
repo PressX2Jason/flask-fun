@@ -1,13 +1,13 @@
 import functools
 
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for
+    Blueprint, flash, g, redirect, render_template, request, session, url_for, jsonify
 )
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from flaskr.db import get_db
 
-bp = Blueprint('auth', __name__, url_prefix='/auth')
+bp = Blueprint('auth', __name__)
 
 # TODO: find a way to create API keys
 def generate_api_key():
@@ -24,22 +24,22 @@ def register():
     errors = []
 
     if not email:
-        errors.append('email is required.')
+        errors.append('Email is required.')
     if not password:
-        errors.append('Password  is required.')
+        errors.append('Password is required.')
     if email and emailExists(email):
         errors.append('User {} is already registered.'.format(email))
     
     if not errors:
         api_key =  generate_api_key()
         db.execute(
-            'INSERT INTO user (email, password) values (?, ?, ?, ?)',
+            'INSERT INTO user (email, password, api_key, curr_num) values (?, ?, ?, ?)',
             (email, generate_password_hash(password), api_key, 0)
         )
         db.commit()
-        return {'api_key': api_key}
+        return jsonify(api_key=api_key)
 
-    return errors
+    return jsonify(errors=errors)
 
 def validateLogin(email, password):
     errors = []
@@ -67,9 +67,10 @@ def validateApiKey(email, apiKey):
 
     return errors
 
-def loginRequired(func):
+def loginRequired(route):
     # TODO: check if we need both api key and password to access the api
-    def wrapper():
+    @functools.wraps(route)
+    def wrapped_route(**kwargs):
         email = request.form['email']
         password = request.form['password']
         apiKey = request.form['apiKey']
@@ -82,9 +83,9 @@ def loginRequired(func):
         if errors:
             return errors
 
-        func()
+        return route(**kwargs)
     
-    return wrapper
+    return wrapped_route
 
 
 

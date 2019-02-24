@@ -5,5 +5,5 @@ CREATE TABLE user (
   email TEXT UNIQUE NOT NULL,
   password TEXT NOT NULL,
   api_key TEXT NOT NULL,
-  curr_num INTEGER UNIQUE NOT NULL
+  curr_num INTEGER NOT NULL
 );
