@@ -24,11 +24,18 @@ def get_next_seq():
     
 @bp.route('/current', methods=['GET', 'PUT'])
 @loginRequired
-def get_current_seq():
+def current_seq():
+    def getCurrentSeq(db, email):
+        return {'current' : db.execute('SELECT curr_num FROM user WHERE email = ?', (email, ), one=True)}
+
+    def setCurrentSeq(db, email, newValue):
+        db.execute('UPDATE user SET curr_num = ? WHERE email = ?', (email, newValue))
+        db.commit()
+        return getCurrentSeq(db, email)
+
     db = get_db()
-    errors = []
-
-    email = request.form['email']
-
-    count = db.execute('SELECT curr_num FROM user WHERE email = ?', (email, ), one=True)
-    return count
+    if request.method == 'GET':
+        result = getCurrentSeq(db, request.form['email'])
+    if request.method == 'PUT':
+        result = setCurrentSeq(db, request.form['email'], request.form['current'])
+    return result 
