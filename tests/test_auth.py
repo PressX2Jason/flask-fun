@@ -27,15 +27,14 @@ def test_register_validate_input(client, email, password, message):
     )
     assert message in response.data
 
-@pytest.mark.parametrize(('email', 'apiKey', 'result'), (
-    ('notInDb', '', 'Email is incorrect.'),
-    ('test', 'a', 'Api Key is incorrect.'),
-    ('test', 'key1', ''),
+@pytest.mark.parametrize(('apiKey', 'result'), (
+    ('NotAKey', 'Api Key is incorrect.'),
+    ('key1', ''),
 ))
-def test_validateApiKey(client, app, email, apiKey, result):
+def test_validateApiKey(client, app, apiKey, result):
 
     with app.app_context():
-        errors = validate_api_key(email, apiKey)
+        errors = validate_api_key(apiKey)
         if result:
             assert result in errors
         else:

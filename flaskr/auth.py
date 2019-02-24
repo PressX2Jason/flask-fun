@@ -1,4 +1,5 @@
 import functools
+from secrets import token_urlsafe
 
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for, jsonify
@@ -8,10 +9,11 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from flaskr.db import get_db
 
 bp = Blueprint('auth', __name__)
+apiKeyLength = 40
 
 # TODO: find a way to create API keys
 def generate_api_key():
-    return '1234356'
+    return token_urlsafe()
 
 @bp.route('/register', methods=['POST'])
 def register():
@@ -54,15 +56,13 @@ def validate_login(email, password):
 
     return errors
 
-def validate_api_key(email, apiKey):
+def validate_api_key(apiKey):
     errors = []
     db = get_db()
 
-    user = db.execute('SELECT * FROM user WHERE email = ?', (email, )).fetchone()
+    apiKey = db.execute('SELECT * FROM user WHERE api_key = ?', (apiKey, )).fetchone()
 
-    if user is None:
-        errors.append('Email is incorrect.')
-    elif user['api_key'] != apiKey:
+    if apiKey is None:
         errors.append('Api Key is incorrect.')
 
     return errors
