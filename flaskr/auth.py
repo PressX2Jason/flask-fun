@@ -64,10 +64,6 @@ def apiKey_required(route):
         if request.headers:
             email = request.headers['X-Email']
             apiKey = request.headers['X-Api-Key']
-        # TODO: remove this?
-        else:
-            email = request.form['email']
-            apiKey = request.form['api_key']
 
         errors = validate_email(email)
         if not errors:
