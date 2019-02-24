@@ -1,7 +1,7 @@
 import functools
 
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for
+    Blueprint, flash, g, redirect, render_template, request, session, url_for, jsonify
 )
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -15,18 +15,18 @@ bp = Blueprint('core', __name__)
 def get_next_seq():
     db = get_db()
 
-    email = request.form['email']
+    email = request.headers['X-Email']
 
     db.execute('UPDATE user SET curr_num = curr_num + 1 WHERE email = ?', (email, ))
     db.commit()
-    count = db.execute('SELECT curr_num FROM user WHERE email = ?', (email, ), one=True)
-    return count
+    count = db.execute('SELECT curr_num FROM user WHERE email = ?', (email, )).fetchone()[0]
+    return jsonify(next_int=count)
     
 @bp.route('/current', methods=['GET', 'PUT'])
 @apiKey_required
 def current_seq():
     def get_current_seq(db, email):
-        return {'current' : db.execute('SELECT curr_num FROM user WHERE email = ?', (email, ), one=True)}
+        return db.execute('SELECT curr_num FROM user WHERE email = ?', (email, )).fetchone()[0]
 
     def set_current_seq(db, email, newValue):
         db.execute('UPDATE user SET curr_num = ? WHERE email = ?', (email, newValue))
@@ -35,7 +35,7 @@ def current_seq():
 
     db = get_db()
     if request.method == 'GET':
-        result = get_current_seq(db, request.form['email'])
+        result = get_current_seq(db, request.headers['X-Email'])
     if request.method == 'PUT':
         result = set_current_seq(db, request.form['email'], request.form['current'])
-    return result 
+    return jsonify(current_int=result) 

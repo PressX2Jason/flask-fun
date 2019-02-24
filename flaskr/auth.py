@@ -58,8 +58,12 @@ def apiKey_required(route):
     # TODO: check if we need both api key and password to access the api
     @functools.wraps(route)
     def wrapped_route(**kwargs):
-        email = request.form['email']
-        apiKey = request.form['api_key']
+        if request.headers:
+            email = request.headers['X-Email'] 
+            apiKey = request.headers['X-Api-Key']
+        else:
+            email = request.form['email'] 
+            apiKey = request.form['api_key']
 
         errors = validate_api_key(email, apiKey)
         if errors:
@@ -68,6 +72,3 @@ def apiKey_required(route):
         return route(**kwargs)
     
     return wrapped_route
-
-
-
