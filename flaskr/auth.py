@@ -47,7 +47,7 @@ def validateLogin(email, password):
 
     user = db.execute('SELECT * FROM user WHERE email = ?', (email, )).fetchone()
 
-    if user is none:
+    if user is None:
         errors.append('email is incorrect.')
     elif not check_password_hash(user['password'], password):
         errors.append('Password is incorrect.')
@@ -60,7 +60,7 @@ def validateApiKey(email, apiKey):
 
     user = db.execute('SELECT * FROM user WHERE email = ?', (email, )).fetchone()
 
-    if user is none:
+    if user is None:
         errors.append('email is incorrect.')
     elif user['apiKey'] != apiKey:
         errors.append('Api Key is incorrect.')
