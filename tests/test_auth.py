@@ -1,7 +1,7 @@
 import pytest
 from flask import g, session
 from flaskr.db import get_db
-from flaskr.auth import validate_api_key, validate_login
+from flaskr.auth import validate_api_key
 
 
 def test_register(client, app):
@@ -27,29 +27,16 @@ def test_register_validate_input(client, email, password, message):
     )
     assert message in response.data
 
-@pytest.mark.parametrize(('apiKey', 'result'), (
-    ('NotAKey', 'Api Key is incorrect.'),
-    ('key1', ''),
+@pytest.mark.parametrize(('email', 'apiKey', 'result'), (
+    ('NotAEmail', 'NotAKey', 'Api Key is incorrect.'),
+    ('test', 'key1', ''),
 ))
-def test_validateApiKey(client, app, apiKey, result):
+def test_validateApiKey(client, email, app, apiKey, result):
 
     with app.app_context():
-        errors = validate_api_key(apiKey)
+        errors = validate_api_key(email, apiKey)
         if result:
             assert result in errors
         else:
             assert not errors
 
-
-@pytest.mark.parametrize(('email', 'password', 'result'), (
-    ('a', '', 'Email is incorrect.'),
-    ('test', '', 'Password is incorrect.'),
-))
-def test_validateLogin(client, app, email, password, result):
-
-    with app.app_context():
-        errors = validate_login(email, password)
-        if result:
-            assert result in errors
-        else:
-            assert not errors

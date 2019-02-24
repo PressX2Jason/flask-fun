@@ -6,12 +6,12 @@ from flask import (
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from flaskr.db import get_db
-from flaskr.auth import login_required
+from flaskr.auth import apiKey_required
 
 bp = Blueprint('core', __name__)
 
 @bp.route('/next', methods=['GET'])
-@login_required
+@apiKey_required
 def get_next_seq():
     db = get_db()
 
@@ -23,7 +23,7 @@ def get_next_seq():
     return count
     
 @bp.route('/current', methods=['GET', 'PUT'])
-@login_required
+@apiKey_required
 def current_seq():
     def get_current_seq(db, email):
         return {'current' : db.execute('SELECT curr_num FROM user WHERE email = ?', (email, ), one=True)}

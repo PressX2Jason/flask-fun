@@ -43,20 +43,7 @@ def register():
 
     return jsonify(errors=errors)
 
-def validate_login(email, password):
-    errors = []
-    db = get_db()
-
-    user = db.execute('SELECT * FROM user WHERE email = ?', (email, )).fetchone()
-
-    if user is None:
-        errors.append('Email is incorrect.')
-    elif not check_password_hash(user['password'], password):
-        errors.append('Password is incorrect.')
-
-    return errors
-
-def validate_api_key(apiKey):
+def validate_api_key(email, apiKey):
     errors = []
     db = get_db()
 
@@ -67,17 +54,12 @@ def validate_api_key(apiKey):
 
     return errors
 
-def login_required(route):
+def apiKey_required(route):
     # TODO: check if we need both api key and password to access the api
     @functools.wraps(route)
     def wrapped_route(**kwargs):
         email = request.form['email']
-        password = request.form['password']
         apiKey = request.form['api_key']
-
-        errors = validate_login(email, password)
-        if errors:
-            return errors
 
         errors = validate_api_key(email, apiKey)
         if errors:
