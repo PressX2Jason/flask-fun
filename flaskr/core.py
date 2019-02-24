@@ -10,7 +10,7 @@ from flaskr.auth import loginRequired
 
 bp = Blueprint('core', __name__)
 
-@bp.route('/next', methods=('GET'))
+@bp.route('/next', methods=['GET'])
 @loginRequired
 def get_next_seq():
     db = get_db()
@@ -22,7 +22,7 @@ def get_next_seq():
     count = db.execute('SELECT curr_num FROM user WHERE email = ?', (email, ), one=True)
     return count
     
-@bp.route('/current', methods=('GET'))
+@bp.route('/current', methods=['GET', 'PUT'])
 @loginRequired
 def get_current_seq():
     db = get_db()

@@ -13,7 +13,7 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 def generate_api_key():
     return '1234356'
 
-@bp.route('/register', methods=('GET'))
+@bp.route('/register', methods=['POST'])
 def register():
     def emailExists(email):
         return db.execute('SELECT id FROM user WHERE email = ?', (email, ) ).fetchone() is not None
