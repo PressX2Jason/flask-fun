@@ -14,22 +14,26 @@ bp = Blueprint('core', __name__)
 def get_current_seq(db, email):
     return db.execute('SELECT curr_num FROM user WHERE email = ?', (email, )).fetchone()[0]
 
+
 @bp.route('/next', methods=['GET'])
 @apiKey_required
 def get_next_seq():
     db = get_db()
     email = request.headers['X-Email']
-    db.execute('UPDATE user SET curr_num = curr_num + 1 WHERE email = ?', (email, ))
+    db.execute(
+        'UPDATE user SET curr_num = curr_num + 1 WHERE email = ?', (email, ))
     db.commit()
     count = get_current_seq(db, email)
     return jsonify(next_int=count)
+
 
 @bp.route('/current', methods=['GET', 'PUT'])
 @apiKey_required
 def current_seq():
     def set_current_seq(email, newValue):
         print(email, newValue)
-        db.execute('UPDATE user SET curr_num = ? WHERE email = ?', (newValue, email, ))
+        db.execute('UPDATE user SET curr_num = ? WHERE email = ?',
+                   (newValue, email, ))
         db.commit()
         return get_current_seq(db, email)
 
@@ -39,4 +43,4 @@ def current_seq():
         result = get_current_seq(db, email)
     if request.method == 'PUT':
         result = set_current_seq(email, request.form['current'])
-    return jsonify(current_int=result) 
+    return jsonify(current_int=result)

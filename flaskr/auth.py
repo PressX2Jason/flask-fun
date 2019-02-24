@@ -13,16 +13,15 @@ bp = Blueprint('auth', __name__)
 apiKeyLength = 40
 
 
-
 @bp.route('/register', methods=['POST'])
 def register():
     def email_exists(email):
-        return db.execute('SELECT id FROM user WHERE email = ?', (email, ) ).fetchone() is not None
-    
+        return db.execute('SELECT id FROM user WHERE email = ?', (email, )).fetchone() is not None
+
     def register_new_email(email, password, apiKey):
         db.execute('INSERT INTO user (email, password, api_key, curr_num) values (?, ?, ?, ?)',
-            (email, generate_password_hash(password), apiKey, 0)
-        )      
+                   (email, generate_password_hash(password), apiKey, 0)
+                   )
         db.commit()
 
     email = request.form['email']
@@ -49,23 +48,25 @@ def validate_api_key(email, apiKey):
     errors = []
     db = get_db()
 
-    apiKey = db.execute('SELECT * FROM user WHERE api_key = ?', (apiKey, )).fetchone()
+    apiKey = db.execute(
+        'SELECT * FROM user WHERE api_key = ?', (apiKey, )).fetchone()
 
     if apiKey is None:
         errors.append('Api Key is incorrect.')
 
     return errors
 
+
 def apiKey_required(route):
     @functools.wraps(route)
     def wrapped_route(**kwargs):
-        
+
         if request.headers:
-            email = request.headers['X-Email'] 
+            email = request.headers['X-Email']
             apiKey = request.headers['X-Api-Key']
         # TODO: remove this?
         else:
-            email = request.form['email'] 
+            email = request.form['email']
             apiKey = request.form['api_key']
 
         errors = validate_email(email)
@@ -75,5 +76,5 @@ def apiKey_required(route):
             return jsonify(errors=errors), 400
 
         return route(**kwargs)
-    
+
     return wrapped_route

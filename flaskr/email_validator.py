@@ -6,10 +6,11 @@ import re
 # so we'll go with the simpiler one found here https://stackoverflow.com/questions/8022530/how-to-check-for-valid-email-address
 email_regex_from_stack_overflow = re.compile(r'[^@]+@[^@]+\.[^@]+')
 
+
 def validate_email(email):
     errors = []
     if not email:
         errors.append('Email is required.')
     elif not email_regex_from_stack_overflow.match(email):
-            errors.append('Email format is invalid.')
+        errors.append('Email format is invalid.')
     return errors

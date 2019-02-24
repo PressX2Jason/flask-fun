@@ -16,6 +16,7 @@ def test_register(client, app):
             "select * from user where email = ?", (validEmail, )
         ).fetchone() is not None
 
+
 @pytest.mark.parametrize(('email', 'password', 'message', 'httpStatusCode'), (
     ('', '', b'Email is required.', 400),
     ('a', '', b'Password is required.', 400),
@@ -28,6 +29,7 @@ def test_register_validate_input(client, email, password, message, httpStatusCod
     )
     assert message in response.data
     assert httpStatusCode == response.status_code
+
 
 @pytest.mark.parametrize(('email', 'apiKey', 'result'), (
     ('NotAEmail', 'NotAKey', 'Api Key is incorrect.'),
