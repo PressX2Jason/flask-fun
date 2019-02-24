@@ -8,12 +8,12 @@ def test_register(client, app):
     response = client.post(
         '/register', data={'email': 'a', 'password': 'a'}
     )
+    assert response.status_code == 200
 
     with app.app_context():
         assert get_db().execute(
             "select * from user where email = 'a'",
         ).fetchone() is not None
-
 
 @pytest.mark.parametrize(('email', 'password', 'message'), (
     ('', '', b'Email is required.'),
@@ -32,7 +32,6 @@ def test_register_validate_input(client, email, password, message):
     ('test', 'key1', ''),
 ))
 def test_validateApiKey(client, email, app, apiKey, result):
-
     with app.app_context():
         errors = validate_api_key(email, apiKey)
         if result:
