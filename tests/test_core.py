@@ -33,5 +33,5 @@ def test_current_seq_get(client):
 current_data_to_100 = { 'current' : 100 }
 
 def test_current_seq_put(client):
-    _assert_current_seq(client, client.put, test_user_header, 0, data=current_data_to_100)
-    _assert_current_seq(client, client.put, other_user_header, 5, data=current_data_to_100)
+    _assert_current_seq(client, client.put, test_user_header, 100, data=current_data_to_100)
+    _assert_current_seq(client, client.put, other_user_header, 100, data=current_data_to_100)

@@ -24,21 +24,23 @@ def register():
 
     if not email:
         errors.append('Email is required.')
+    elif email_exists(email):
+        errors.append('User {} is already registered.'.format(email))
     if not password:
         errors.append('Password is required.')
-    if email and email_exists(email):
-        errors.append('User {} is already registered.'.format(email))
-    
-    if not errors:
-        api_key = token_urlsafe()
-        db.execute(
-            'INSERT INTO user (email, password, api_key, curr_num) values (?, ?, ?, ?)',
-            (email, generate_password_hash(password), api_key, 0)
-        )
-        db.commit()
-        return jsonify(api_key=api_key)
 
-    return jsonify(errors=errors)
+    if errors:
+        return jsonify(errors=errors)
+
+    api_key = token_urlsafe()
+    db.execute(
+        'INSERT INTO user (email, password, api_key, curr_num) values (?, ?, ?, ?)',
+        (email, generate_password_hash(password), api_key, 0)
+    )
+    db.commit()
+    return jsonify(api_key=api_key)
+
+    
 
 def validate_api_key(email, apiKey):
     errors = []
