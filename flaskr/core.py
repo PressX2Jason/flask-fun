@@ -28,7 +28,7 @@ def get_current_seq():
     db = get_db()
     errors = []
 
-     email = request.form['email']
+    email = request.form['email']
 
     count = db.execute('SELECT curr_num FROM user WHERE email = ?', (email, ), one=True)
     return count
