@@ -11,9 +11,6 @@ from flaskr.db import get_db
 bp = Blueprint('auth', __name__)
 apiKeyLength = 40
 
-# TODO: find a way to create API keys
-def generate_api_key():
-    return token_urlsafe()
 
 @bp.route('/register', methods=['POST'])
 def register():
@@ -33,7 +30,7 @@ def register():
         errors.append('User {} is already registered.'.format(email))
     
     if not errors:
-        api_key =  generate_api_key()
+        api_key = token_urlsafe()
         db.execute(
             'INSERT INTO user (email, password, api_key, curr_num) values (?, ?, ?, ?)',
             (email, generate_password_hash(password), api_key, 0)
@@ -55,7 +52,6 @@ def validate_api_key(email, apiKey):
     return errors
 
 def apiKey_required(route):
-    # TODO: check if we need both api key and password to access the api
     @functools.wraps(route)
     def wrapped_route(**kwargs):
         if request.headers:
