@@ -19,9 +19,10 @@ def register():
         return db.execute('SELECT id FROM user WHERE email = ?', (email, )).fetchone() is not None
 
     def register_new_email(email, password, apiKey):
-        db.execute('INSERT INTO user (email, password, api_key, curr_num) values (?, ?, ?, ?)',
-                   (email, generate_password_hash(password), apiKey, 0)
-                   )
+        db.execute(
+            'INSERT INTO user (email, password, api_key, curr_num) values (?, ?, ?, ?)',
+            (email, generate_password_hash(password), apiKey, 0)
+        )
         db.commit()
 
     email = request.form['email']
@@ -49,7 +50,9 @@ def validate_api_key(email, apiKey):
     db = get_db()
 
     apiKey = db.execute(
-        'SELECT * FROM user WHERE email = ? And api_key = ?', (email, apiKey)).fetchone()
+        'SELECT * FROM user WHERE email = ? And api_key = ?',
+        (email, apiKey)
+    ).fetchone()
 
     if not apiKey or apiKey is None:
         errors.append('Api Key is incorrect.')
