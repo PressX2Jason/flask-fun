@@ -34,12 +34,12 @@ def current_seq():
         db.execute('UPDATE user SET curr_num = ? WHERE email = ?',
                    (newValue, email, ))
         db.commit()
-        return get_current_seq(db, email)
 
     db = get_db()
     email = request.headers['X-Email']
     if request.method == 'GET':
         result = get_current_seq(db, email)
     if request.method == 'PUT':
-        result = set_current_seq(email, request.form['current'])
+        set_current_seq(email, request.form['current'])
+        result = get_current_seq(db, email)
     return jsonify(current_int=result)
