@@ -24,7 +24,7 @@ def _get_current_req(client, email, apiKey, expectedHttpStatus=200):
     return response
 
 
-def _post_current_req(client, email, apiKey, data, expectedHttpStatus=200):
+def _put_current_req(client, email, apiKey, data, expectedHttpStatus=200):
     response = client.put(
         '/current', headers={'X-email': email, "X-Api-Key": apiKey}, data=data)
     assert response
