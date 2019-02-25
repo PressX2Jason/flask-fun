@@ -19,7 +19,8 @@ def test_register(client, app):
 
 @pytest.mark.parametrize(('email', 'password', 'message', 'httpStatusCode'), (
     ('', '', b'Email is required.', 400),
-    ('a', '', b'Password is required.', 400),
+    ('other@yahoo.com', '', b'Password is required.', 400),
+    ('other@yah', 'a', b'Email format is invalid', 400),
     ('other@yahoo.com', 'test', b'already registered', 400),
 ))
 def test_register_validate_input(client, email, password, message, httpStatusCode):
@@ -32,8 +33,9 @@ def test_register_validate_input(client, email, password, message, httpStatusCod
 
 
 @pytest.mark.parametrize(('email', 'apiKey', 'result'), (
-    ('NotAEmail', 'NotAKey', 'Api Key is incorrect.'),
-    ('test', 'key1', ''),
+    ('notAEmail', 'notAKey', 'Api Key is incorrect.'),
+    ('test@gmail.com', 'wrongKey', 'Api Key is incorrect.'),
+    ('test@gmail.com', 'key1', '')
 ))
 def test_validateApiKey(client, email, app, apiKey, result):
     with app.app_context():

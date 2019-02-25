@@ -10,7 +10,6 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from flaskr.db import get_db
 
 bp = Blueprint('auth', __name__)
-apiKeyLength = 40
 
 
 @bp.route('/register', methods=['POST'])
@@ -30,7 +29,7 @@ def register():
 
     errors = validate_email(email)
 
-    if not errors and email_exists(email):
+    if email_exists(email):
         errors.append('User {} is already registered.'.format(email))
     if not password:
         errors.append('Password is required.')
@@ -49,9 +48,9 @@ def validate_api_key(email, apiKey):
     db = get_db()
 
     apiKey = db.execute(
-        'SELECT * FROM user WHERE api_key = ?', (apiKey, )).fetchone()
+        'SELECT * FROM user WHERE email = ? And api_key = ?', (email, apiKey)).fetchone()
 
-    if apiKey is None:
+    if not apiKey or apiKey is None:
         errors.append('Api Key is incorrect.')
 
     return errors
