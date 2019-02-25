@@ -58,7 +58,7 @@ def test_happy_route(client, app):
         assert nextInt == i
 
     for i in range(100, 150, 10):
-        updatedCurrentResponse = _post_current_req(client, email, apiKey, {'current': i})
+        updatedCurrentResponse = _put_current_req(client, email, apiKey, {'current': i})
         reponseInt = _get_pay_load(updatedCurrentResponse, 'current_int')
         assert reponseInt == i
 
