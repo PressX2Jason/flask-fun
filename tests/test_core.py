@@ -1,25 +1,26 @@
 import pytest
 from flask import g, session
 from flaskr.db import get_db
+from flaskr.headers import EMAIL_HEADER, API_KEY_HEADER, REQUEST_CURRENT
 
 test_user_header = {
-    'X-Email': 'test@gmail.com',
-    'X-Api-Key': 'key1'
+    EMAIL_HEADER: 'test@gmail.com',
+    API_KEY_HEADER: 'key1'
 }
 
 other_user_header = {
-    'X-Email': 'other@yahoo.com',
-    'X-Api-Key': 'key2'
+    EMAIL_HEADER: 'other@yahoo.com',
+    API_KEY_HEADER: 'key2'
 }
 
 invalid_email_header = {
-    'X-Email': 'totallyAEmail',
-    'X-Api-Key': 'key1'
+    EMAIL_HEADER: 'totallyAEmail',
+    API_KEY_HEADER: 'key1'
 }
 
 invalid_apiKey_header = {
-    'X-Email': 'test@gmail.com',
-    'X-Api-Key': 'definatelyAKey'
+    EMAIL_HEADER: 'test@gmail.com',
+    API_KEY_HEADER: 'definatelyAKey'
 }
 
 
@@ -47,8 +48,8 @@ def test_get_current_seq(client, header, message, expectedHttpStatusCode):
     assert message in response.data
 
 
-current_data_to_100 = {'current': 100}
-current_data_to_150 = {'current': 150}
+current_data_to_100 = {REQUEST_CURRENT: 100}
+current_data_to_150 = {REQUEST_CURRENT: 150}
 
 
 @pytest.mark.parametrize(('header', 'message', 'expectedHttpStatusCode', 'data'), (

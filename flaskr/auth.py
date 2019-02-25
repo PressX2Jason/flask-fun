@@ -1,6 +1,7 @@
 import functools
 from secrets import token_urlsafe
 from flaskr.email_validator import validate_email
+from flaskr.headers import EMAIL_HEADER, API_KEY_HEADER
 
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for, jsonify
@@ -61,8 +62,8 @@ def apiKey_required(route):
     def wrapped_route(**kwargs):
 
         if request.headers:
-            email = request.headers['X-Email']
-            apiKey = request.headers['X-Api-Key']
+            email = request.headers[EMAIL_HEADER]
+            apiKey = request.headers[API_KEY_HEADER]
 
         errors = validate_email(email)
         if not errors:

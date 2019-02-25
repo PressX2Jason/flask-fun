@@ -1,5 +1,6 @@
 import pytest
 from flask import g, session, json
+from flaskr.headers import EMAIL_HEADER, API_KEY_HEADER, REQUEST_CURRENT
 
 def _register_user(client, email, password):
     response = client.post(
@@ -18,7 +19,7 @@ def _get_pay_load(response, field):
 
 def _get_current_req(client, email, apiKey, expectedHttpStatus=200):
     response = client.get(
-        '/current', headers={'X-email': email, "X-Api-Key": apiKey})
+        '/current', headers={EMAIL_HEADER: email, API_KEY_HEADER: apiKey})
     assert response
     assert response.status_code == expectedHttpStatus
     return response
@@ -26,7 +27,7 @@ def _get_current_req(client, email, apiKey, expectedHttpStatus=200):
 
 def _put_current_req(client, email, apiKey, data, expectedHttpStatus=200):
     response = client.put(
-        '/current', headers={'X-email': email, "X-Api-Key": apiKey}, data=data)
+        '/current', headers={EMAIL_HEADER: email, API_KEY_HEADER: apiKey}, data=data)
     assert response
     assert response.status_code == expectedHttpStatus
     return response
@@ -34,7 +35,7 @@ def _put_current_req(client, email, apiKey, data, expectedHttpStatus=200):
 
 def _get_next_req(client, email, apiKey, expectedHttpStatus=200):
     response = client.get(
-        '/next', headers={'X-email': email, "X-Api-Key": apiKey})
+        '/next', headers={EMAIL_HEADER: email, API_KEY_HEADER: apiKey})
     assert response
     assert response.status_code == expectedHttpStatus
     return response
