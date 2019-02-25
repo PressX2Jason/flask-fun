@@ -1,7 +1,6 @@
 import pytest
 from flask import g, session, json
 
-
 def _register_user(client, email, password):
     response = client.post(
         '/register', data={'email': email, 'password': password}
@@ -26,7 +25,7 @@ def _get_current_req(client, email, apiKey, expectedHttpStatus=200):
 
 
 def _post_current_req(client, email, apiKey, data, expectedHttpStatus=200):
-    response = client.get(
+    response = client.put(
         '/current', headers={'X-email': email, "X-Api-Key": apiKey}, data=data)
     assert response
     assert response.status_code == expectedHttpStatus
@@ -59,7 +58,6 @@ def test_happy_route(client, app):
         assert nextInt == i
 
     for i in range(100, 150, 10):
-        print('setting current int to %d' % i)
         updatedCurrentResponse = _post_current_req(client, email, apiKey, {'current': i})
         reponseInt = _get_pay_load(updatedCurrentResponse, 'current_int')
         assert reponseInt == i
@@ -67,6 +65,3 @@ def test_happy_route(client, app):
         currentResponse = _get_current_req(client, email, apiKey)
         currentInt = _get_pay_load(currentResponse, 'current_int')
         assert currentInt == i
-
-
-    assert False

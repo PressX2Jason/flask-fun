@@ -48,7 +48,7 @@ def test_get_current_seq(client, header, message, expectedHttpStatusCode):
 
 
 current_data_to_100 = {'current': 100}
-current_data_to_150 = {'current': 100}
+current_data_to_150 = {'current': 150}
 
 
 @pytest.mark.parametrize(('header', 'message', 'expectedHttpStatusCode', 'data'), (
