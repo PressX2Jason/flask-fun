@@ -31,7 +31,6 @@ def get_next_seq():
 @apiKey_required
 def current_seq():
     def set_current_seq(email, newValue):
-        print(email, newValue)
         db.execute('UPDATE user SET curr_num = ? WHERE email = ?',
                    (newValue, email, ))
         db.commit()
