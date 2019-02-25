@@ -64,9 +64,8 @@ def apiKey_required(route):
     @functools.wraps(route)
     def wrapped_route(**kwargs):
 
-        if request.headers:
-            email = request.headers[EMAIL_HEADER]
-            apiKey = request.headers[API_KEY_HEADER]
+        email = request.headers[EMAIL_HEADER]
+        apiKey = request.headers[API_KEY_HEADER]
 
         errors = validate_email(email)
         if not errors:

@@ -23,13 +23,16 @@ def get_current_seq(db, email):
 @bp.route('/next', methods=['GET'])
 @apiKey_required
 def get_next_seq():
+    def inc_curr_num(email):
+        db.execute(
+            'UPDATE user SET curr_num = curr_num + 1 WHERE email = ?',
+            (email, )
+        )   
+        db.commit()
+
     db = get_db()
     email = request.headers[EMAIL_HEADER]
-    db.execute(
-        'UPDATE user SET curr_num = curr_num + 1 WHERE email = ?',
-        (email, )
-    )
-    db.commit()
+    inc_curr_num(email)
     count = get_current_seq(db, email)
     return jsonify(next_int=count)
 
